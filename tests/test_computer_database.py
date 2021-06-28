@@ -2,14 +2,18 @@ import requests
 from src import table_functions
 
 
-# A user should be able to access the homepage
+# Smoke test
+# Given an API request for the home page
+# Then the status code should be 200, and the content should not be empty
 def test_database_home_page():
     response = requests.get(table_functions.app_url)
     assert response.status_code == 200
     assert response.content != "", "homepage content was empty"
 
 
-# A user should be able to see a full list of rows on the home page
+# This could be slightly flaky on a production DB, and it would be best to seed data before running this
+# Given an API request for the first page of the database
+# Then the user should find 10 rows of data
 def test_database_load_page():
     table_rows = table_functions.load_data(page=1)
     assert len(table_rows) == 10
@@ -19,7 +23,9 @@ def test_database_load_page():
         assert row.computer_name != ""
 
 
-# A user should be able to get all the database rows by iterating over the pages
+# Given an initial request to the database for the number of rows in the database
+# When a user sends requests for all of the pages
+# Then a user should be able to get all the database rows by iterating over the pages
 # Note: Slow (iterates over ~60 pages), and a live DB could have more data introduced / removed at any given time
 def test_full_database_load():
     table_rows = table_functions.load_data()
@@ -29,7 +35,9 @@ def test_full_database_load():
         assert row.computer_name != ""
 
 
-# A user should be able to add a computer with just a name
+# Given an API request to the save endpoint with just a computer name
+# Then a new row should be created in the database
+# Note: Could use better validation
 def test_add_computer_name_only():
     computer_name = "A"
     total_count = table_functions.get_total_count(filter=computer_name)
@@ -39,7 +47,10 @@ def test_add_computer_name_only():
     assert response.status_code == 200
 
 
-# A user should be able to add a computer with all form fields filled
+# Given a request with all form fields filled
+# When a request is sent
+# Then a new row should be created in the database
+# Note: Could use better validation
 def test_add_computer_with_valid_data():
     computer_name = "ABCDEF"
     introduced_date = "1990-01-01"
@@ -56,8 +67,9 @@ def test_add_computer_with_valid_data():
     assert total_count + 1 == table_functions.get_total_count(filter=computer_name)
 
 
-# A user is blocked from adding a computer with invalid introduced date in the UI, so the API should block it too
-# This inexplicably does not fail (the computer is added with no date)
+# Given that a user is blocked from submitting a form with invalid date
+# When an API request is sent with the same information
+# Then the request should fail and a new row should not be created in the database
 def test_add_computer_with_invalid_introduced_date():
     # this date does not conform to 'yyyy-MM-dd' UI requirement
     introduced_date = "abc"
@@ -70,7 +82,9 @@ def test_add_computer_with_invalid_introduced_date():
     assert table_functions.get_total_count(filter=computer_name) == total_count
 
 
-# A user is blocked from adding a computer with invalid discontinued date in the UI, so the API should block it too
+# Given that a user is blocked from submitting a form with invalid date
+# When an API request is sent with the same information
+# Then the request should fail and a new row should not be created in the database
 def test_add_computer_with_invalid_discontinued_date():
     # this date does not conform to 'yyyy-MM-dd' UI requirement
     discontinued_date = "def"
@@ -83,7 +97,9 @@ def test_add_computer_with_invalid_discontinued_date():
     assert table_functions.get_total_count(filter=computer_name) == total_count
 
 
-# A user is blocked from adding a computer with a company that is not in the UI dropdown, so the API should block it too
+# Given that a user is blocked from submitting a form with invalid company name
+# When an API request is sent with the same information
+# Then the request should fail and a new row should not be created in the database
 def test_add_computer_with_invalid_company():
     company = "Apple"
     computer_name = "A"
@@ -95,13 +111,17 @@ def test_add_computer_with_invalid_company():
     assert table_functions.get_total_count(filter=computer_name) == total_count
 
 
-# A user should not be able to reach a page for a computer which does not exist
+# Given that a user cannot access a computer with ID 0
+# When an API request is sent for the same computer
+# Then the request should fail
 def test_get_invalid_computer():
     response = requests.get(table_functions.app_url + "/0")
     assert response.status_code == 404
 
 
-# A user should be able to go to the homepage, choose a computer to delete, delete it, and confirm that it is gone
+# Given that a user can delete a computer from the UI
+# When a request is sent with the same data
+# Then computer should be removed from the database
 def test_delete_computer():
     total_count = table_functions.get_total_count()
     table_rows = table_functions.load_data(page=1)
@@ -118,7 +138,9 @@ def test_delete_computer():
     assert requests.get(table_functions.app_url + "/{}".format(computer_id)).status_code == 404
 
 
-# A user should be able to go to the homepage, choose a computer, and update its data
+# Given a user is able to update a computer's information from the UI
+# When a user updates the information to a known state, and then changes the data again
+# Then the data should match what the user has submitted
 def test_update_computer():
     table_rows = table_functions.load_data(page=1)
     computer_id = table_rows[0].computer_id

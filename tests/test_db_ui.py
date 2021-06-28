@@ -4,7 +4,9 @@ from selenium.webdriver.common.by import By
 app_url = "https://computer-database.herokuapp.com/computers"
 
 
-# The count near the top and bottom should match
+# Given a user using chrome
+# When navigating to the database's home page
+# Then the counts of computers should match at the top and bottom
 def test_homepage_counts_match():
     try:
         driver = webdriver.Chrome("../chromedriver.exe")
@@ -21,7 +23,9 @@ def test_homepage_counts_match():
         driver.quit()
 
 
-# A user should be able to click the banner from any page to get back to the homepage
+# Given a user using chrome and going to a specific page
+# When clicking the banner element
+# Then they should end up back on the home page
 def test_homepage_button():
     try:
         driver = webdriver.Chrome("../chromedriver.exe")
@@ -31,11 +35,14 @@ def test_homepage_button():
         homepage_button = driver.find_element(By.XPATH, "//h1[@class='fill']/a")
         homepage_button.click()
         assert driver.current_url == app_url
-        
+
     finally:
         driver.quit()
 
 
+# Given a user on the database's home page
+# When they add a filter and activate it
+# Then all results should have the filtered text
 def test_filter():
     try:
         driver = webdriver.Chrome("../chromedriver.exe")
@@ -53,6 +60,10 @@ def test_filter():
         driver.quit()
 
 
+# Given a user on the database's home page
+# When they navigate to the next page
+# And then the previous page
+# Then they should end up back on the home page
 def test_navigation_buttons():
     try:
         driver = webdriver.Chrome("../chromedriver.exe")
