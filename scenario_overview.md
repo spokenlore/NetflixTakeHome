@@ -1,6 +1,9 @@
-# Happy Path Scenarios:
+# Notes (best practices):
+* Ideally, we would also build some functionality to seed data into the database (since this live database is being used by a lot of people)
+* Teardown / startup of Webdriver could be wrapped so it is not specified in every test
+* There should be a file with commonly used XPATHs so they're not defined again in every test
 
-Ideally, we would also build some functionality to seed data into the database (since this live database is being used by a lot of people)
+# Happy Path Scenarios:
 
 End-to-end (UI) (would have more tests in reality):
 1. Accessing the page

@@ -104,9 +104,8 @@ def update_computer(id, computer_name, introduced_date="", discontinued_date="",
 
     return response
 
-
+# Testing functionality
 # load_data()
 # add_computer("ABC")
 # add_computer("A", company="Apple")
-
-get_computer(501)
+# get_computer(501)
