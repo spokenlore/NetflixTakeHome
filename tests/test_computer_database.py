@@ -38,10 +38,9 @@ def test_full_database_load():
 # Given an API request to the save endpoint with just a computer name
 # Then a new row should be created in the database
 # Note: Could use better validation
-def test_add_computer_name_only():
-    computer_name = "A"
+def test_add_computer_name_only(computer_name = "ABC"):
     total_count = table_functions.get_total_count(filter=computer_name)
-    response = table_functions.add_computer("A")
+    response = table_functions.add_computer
     # database count should increment by 1 after adding a new computer
     assert table_functions.get_total_count(filter=computer_name) == total_count + 1
     assert response.status_code == 200
@@ -107,6 +106,19 @@ def test_add_computer_with_invalid_company():
 
     # invalid discontinued date
     response = table_functions.add_computer(computer_name, company=company)
+    assert response.status_code == 400
+    assert table_functions.get_total_count(filter=computer_name) == total_count
+
+
+# Given that a user is blocked from submitting a form with no computer name
+# When an API request is sent with the same information
+# Then the request should fail and a new row should not be created in the database
+def test_add_computer_with_invalid_name():
+    computer_name = ""
+    total_count = table_functions.get_total_count(filter=computer_name)
+
+    # invalid discontinued date
+    response = table_functions.add_computer(computer_name)
     assert response.status_code == 400
     assert table_functions.get_total_count(filter=computer_name) == total_count
 

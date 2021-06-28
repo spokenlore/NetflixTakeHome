@@ -45,10 +45,13 @@ def test_homepage_button():
 # Then all results should have the filtered text
 def test_filter():
     try:
+        from test_computer_database import test_add_computer_name_only
+        test_add_computer_name_only()
         driver = webdriver.Chrome("../chromedriver.exe")
         driver.get(app_url)
         filter_input = driver.find_element(By.XPATH, "//input[@type='search']")
         filter_input.click()
+        # This should exist because add_computer adds a computer with name "ABC"
         filter_input.send_keys("ABC")
         filter_button = driver.find_element(By.XPATH, "//input[@type='submit']")
         filter_button.click()
