@@ -56,3 +56,6 @@
     * Notes:
         * Allows duplicates by name and other form data
     
+* DELETE /computers/[int]
+    * Deletes computer corresponding to ID
+    
